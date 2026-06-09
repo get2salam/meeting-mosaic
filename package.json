@@ -1,0 +1,10 @@
+{
+  "name": "meeting-mosaic",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Turn scattered meeting notes into structured decisions, actions, and follow-ups.",
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test \"test/**/*.test.mjs\""
+  }
+}

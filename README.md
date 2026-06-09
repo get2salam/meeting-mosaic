@@ -31,6 +31,16 @@ python -m http.server 8000
 
 Then open <http://localhost:8000>.
 
+## Verify
+
+Meeting Mosaic ships with a small integrity test suite that catches drift between `index.html`, `js/main.js`, and the embedded `SPEC` config. It needs nothing but Node 20+ — no dependencies, no build step.
+
+```bash
+npm test
+```
+
+The suite confirms every `data-role` / `data-field` / `data-action` attribute in the HTML has a matching reference in `main.js`, that the documented keyboard shortcuts are wired up, and that the `SPEC` states, weights, and seed items stay consistent. CI runs the same checks on Node 20 and 22.
+
 ## Keyboard shortcuts
 
 - `N` creates a new meeting fragment
