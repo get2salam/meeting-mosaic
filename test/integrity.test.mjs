@@ -91,3 +91,31 @@ test('SPEC.metric default falls within the declared min/max range', () => {
   assert.ok(metric.default >= metric.min && metric.default <= metric.max,
     `metric default ${metric.default} is outside [${metric.min}, ${metric.max}]`);
 });
+
+test('user-controlled item fields are escaped before innerHTML rendering', () => {
+  assert.match(JS, /function safeText\(value\) \{/,
+    'expected a dedicated text escaping helper for HTML template rendering');
+
+  const unsafeTemplateSnippets = [
+    'data-id="${item.id}"',
+    '>${item.title}<',
+    '>${item.note}<',
+    '>${item.textOne}<',
+    '${item.textOne} · ${item.textTwo}',
+    '${SPEC.textTwo.label}: ${item.textTwo}',
+    '>${item.category}<',
+    '>${item.state}<',
+    'value="${item.date}"',
+    '>${strongest}<',
+  ];
+
+  for (const snippet of unsafeTemplateSnippets) {
+    assert.ok(!JS.includes(snippet),
+      `${snippet} should be escaped before it is interpolated into innerHTML`);
+  }
+
+  for (const field of ['id', 'title', 'note', 'textOne', 'textTwo']) {
+    assert.ok(JS.includes(`safeText(item.${field})`),
+      `expected item.${field} to be rendered through safeText()`);
+  }
+});

@@ -225,6 +225,10 @@ function escapeHtml(value) {
     .replaceAll('"', '&quot;');
 }
 
+function safeText(value) {
+  return escapeHtml(value);
+}
+
 function clamp(value, min, max) {
   return Math.max(min, Math.min(max, Number(value)));
 }
@@ -463,8 +467,8 @@ function renderInsights(items) {
   refs.insights.innerHTML = cards.map((card) => `
     <article class="card insight-card">
       <p class="eyebrow">${card.label}</p>
-      <h3>${card.title}</h3>
-      <p>${card.body}</p>
+      <h3>${safeText(card.title)}</h3>
+      <p>${safeText(card.body)}</p>
     </article>
   `).join('');
 }
@@ -481,21 +485,21 @@ function renderList(items) {
   }
 
   refs.list.innerHTML = items.map((item) => `
-    <button class="item ${item.id === state.ui.selectedId ? 'is-selected' : ''}" type="button" data-id="${item.id}">
+    <button class="item ${item.id === state.ui.selectedId ? 'is-selected' : ''}" type="button" data-id="${safeText(item.id)}">
       <div class="item-top">
-        <strong>${item.title}</strong>
+        <strong>${safeText(item.title)}</strong>
         <span class="score">${priority(item)}</span>
       </div>
-      <p>${item.note}</p>
+      <p>${safeText(item.note)}</p>
       <div class="badge-row">
         <span class="pill ${toneForDate(item)}">${formatDate(item.date)}</span>
-        <span class="pill">${item.textOne}</span>
+        <span class="pill">${safeText(item.textOne)}</span>
         <span class="pill">${SPEC.metric.label} ${item.metric}/${SPEC.metric.max}</span>
       </div>
       <div class="meta">
-        <span>${item.category}</span>
-        <span>${item.state}</span>
-        <span>${SPEC.textTwo.label}: ${item.textTwo}</span>
+        <span>${safeText(item.category)}</span>
+        <span>${safeText(item.state)}</span>
+        <span>${SPEC.textTwo.label}: ${safeText(item.textTwo)}</span>
         <span>Friction ${item.effort}/10</span>
       </div>
     </button>
@@ -517,7 +521,7 @@ function renderEditor(item) {
     <div class="editor-head">
       <div>
         <p class="eyebrow">${SPEC.editorEyebrow || `${SPEC.itemLabel} editor`}</p>
-        <h3>${item.title}</h3>
+        <h3>${safeText(item.title)}</h3>
       </div>
       <span class="score">Priority ${priority(item)}</span>
     </div>
@@ -551,7 +555,7 @@ function renderEditor(item) {
       <div class="field-grid">
         <label class="field">
           <span>${SPEC.date.label}</span>
-          <input type="date" data-item-field="date" value="${item.date}" />
+          <input type="date" data-item-field="date" value="${safeText(item.date)}" />
         </label>
         <label class="field range-wrap">
           <span>${SPEC.metric.label}</span>
@@ -577,7 +581,7 @@ function renderEditor(item) {
         </label>
       </div>
       <div class="quick-actions">
-        ${SPEC.actions.map((action) => `<button class="btn" type="button" data-action-id="${action.id}">${action.label}</button>`).join('')}
+        ${SPEC.actions.map((action) => `<button class="btn" type="button" data-action-id="${safeText(action.id)}">${safeText(action.label)}</button>`).join('')}
       </div>
       <div class="editor-actions">
         <span class="helper">${SPEC.date.label} ${formatDate(item.date)} and ${SPEC.metric.label.toLowerCase()} ${item.metric}/${SPEC.metric.max}.</span>
@@ -601,10 +605,10 @@ function renderPanels() {
       ${queue.slice(0, 4).map((item) => `
         <div class="mini-card">
           <div class="inline-split">
-            <strong>${item.title}</strong>
+            <strong>${safeText(item.title)}</strong>
             <span class="pill ${toneForDate(item)}">${formatDate(item.date)}</span>
           </div>
-          <p>${item.textOne} · ${item.textTwo} · ${SPEC.metric.label.toLowerCase()} ${item.metric}/${SPEC.metric.max}.</p>
+          <p>${safeText(item.textOne)} · ${safeText(item.textTwo)} · ${SPEC.metric.label.toLowerCase()} ${item.metric}/${SPEC.metric.max}.</p>
         </div>
       `).join('') || `<div class="empty"><strong>No pending ${SPEC.itemPluralLabel.toLowerCase()}</strong><p>${SPEC.queue.empty}</p></div>`}
     </div>
@@ -622,7 +626,7 @@ function renderPanels() {
     </div>
     <ul class="metric-list">
       ${byCategory.map(({ entry, count }) => `<li><span>${entry}</span><strong>${count}</strong></li>`).join('')}
-      <li><span>Strongest ${SPEC.metric.label.toLowerCase()}</span><strong>${strongest}</strong></li>
+      <li><span>Strongest ${SPEC.metric.label.toLowerCase()}</span><strong>${safeText(strongest)}</strong></li>
     </ul>
   `;
 }
