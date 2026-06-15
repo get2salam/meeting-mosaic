@@ -5,6 +5,7 @@
   "description": "Turn scattered meeting notes into structured decisions, actions, and follow-ups.",
   "license": "MIT",
   "scripts": {
-    "test": "node --test \"test/**/*.test.mjs\""
+    "test": "node --test test/*.test.mjs",
+    "test:ci": "npm test"
   }
 }

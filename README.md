@@ -39,7 +39,13 @@ Meeting Mosaic ships with a small integrity test suite that catches drift betwee
 npm test
 ```
 
-The suite confirms every `data-role` / `data-field` / `data-action` attribute in the HTML has a matching reference in `main.js`, that the documented keyboard shortcuts are wired up, and that the `SPEC` states, weights, and seed items stay consistent. CI runs the same checks on Node 20 and 22.
+The suite confirms every `data-role` / `data-field` / `data-action` attribute in the HTML has a matching reference in `main.js`, that the documented keyboard shortcuts are wired up, and that the `SPEC` states, weights, and seed items stay consistent. CI runs the same checks on Node 20 and 22 through the explicit CI script:
+
+```bash
+npm run test:ci
+```
+
+The test contract also guards the package scripts and workflow wiring, so local verification and GitHub Actions do not silently drift apart.
 
 ## Keyboard shortcuts
 
