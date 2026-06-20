@@ -229,8 +229,10 @@ function safeText(value) {
   return escapeHtml(value);
 }
 
-function clamp(value, min, max) {
-  return Math.max(min, Math.min(max, Number(value)));
+function clamp(value, min, max, fallback = min) {
+  const number = Number(value);
+  const safeValue = Number.isFinite(number) ? number : fallback;
+  return Math.max(min, Math.min(max, safeValue));
 }
 
 function completedStates() {
@@ -256,9 +258,9 @@ function normalize(item = {}) {
     note: item.note || SPEC.defaults.note,
     category: SPEC.categories.includes(item.category) ? item.category : SPEC.categories[0],
     state: SPEC.states.includes(item.state) ? item.state : SPEC.states[0],
-    score: clamp(item.score ?? 7, 1, 10),
-    effort: clamp(item.effort ?? 3, 1, 10),
-    metric: clamp(item.metric ?? SPEC.metric.default ?? 6, SPEC.metric.min, SPEC.metric.max),
+    score: clamp(item.score ?? 7, 1, 10, 7),
+    effort: clamp(item.effort ?? 3, 1, 10, 3),
+    metric: clamp(item.metric ?? SPEC.metric.default ?? 6, SPEC.metric.min, SPEC.metric.max, SPEC.metric.default ?? 6),
     textOne: item.textOne || SPEC.textOne.default,
     textTwo: item.textTwo || SPEC.textTwo.default,
     date: item.date || todayISO(3),
@@ -334,7 +336,7 @@ function updateSelected(field, value) {
       const next = { ...item, [field]: value };
       if (['score', 'effort', 'metric'].includes(field)) {
         const bounds = field === 'metric' ? SPEC.metric : { min: 1, max: 10 };
-        next[field] = clamp(value, bounds.min, bounds.max);
+        next[field] = clamp(value, bounds.min, bounds.max, target[field]);
       }
       return next;
     }),
