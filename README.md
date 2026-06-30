@@ -52,6 +52,30 @@ The test contract also guards the package scripts and workflow wiring, so local 
 - `N` creates a new meeting fragment
 - `/` focuses the search box
 
+## How ranking works
+
+Every meeting fragment gets a numeric priority that drives board order and the follow-up queue:
+
+```
+priority = score × 6 + clarity × 5 + due-boost + state-weight − friction × 4
+```
+
+| Factor | Description | Range |
+|--------|-------------|-------|
+| Score (Importance) | How much this outcome matters | 1–10 |
+| Clarity | How well-understood the next move is | 1–10 |
+| Due boost | Extra weight for items due within 4 days | 0–16 |
+| State weight | Aligned 8 · Waiting 7 · Closed 3 · Captured 2 | — |
+| Friction (Messiness) | Complexity cost subtracted from score | 1–10 |
+
+To surface an item sooner: raise its importance or clarity, reduce friction, or keep its follow-up date current. When two items share the same score, the one with the earlier follow-up date wins.
+
+The `test/scoring.test.mjs` suite verifies each factor in isolation — run it with:
+
+```bash
+node --test test/scoring.test.mjs
+```
+
 ## Privacy
 
 Everything stays in your browser unless you export a JSON backup.
