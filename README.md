@@ -76,6 +76,27 @@ The `test/scoring.test.mjs` suite verifies each factor in isolation — run it w
 node --test test/scoring.test.mjs
 ```
 
+## Validating a backup file
+
+Every export writes a `schema` tag plus the same `category` and `state` values the board uses, but a
+hand-edited or scripted backup can drift from that shape. Importing a backup with an unknown category
+or state does not fail — `normalize()` in `js/main.js` silently swaps it for the first declared
+default, which can quietly change data you meant to keep. Check a file before importing it:
+
+```bash
+node scripts/validate-backup.mjs path/to/meeting-mosaic.json
+```
+
+It reports every item whose category, state, score, friction, clarity, or follow-up date falls
+outside what the board accepts, and warns (without failing) on a `schema` mismatch. Exit code is `0`
+when the file is safe to import, `1` when it needs a fix first.
+
+`test/validate-backup.test.mjs` exercises the same checks against known-good and known-bad payloads:
+
+```bash
+node --test test/validate-backup.test.mjs
+```
+
 ## Privacy
 
 Everything stays in your browser unless you export a JSON backup.
